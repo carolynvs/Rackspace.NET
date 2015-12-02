@@ -83,10 +83,16 @@
     <Compile Include="CloudNetworks\v2\Subnet.cs" />
     <Compile Include="CloudNetworks\v2\SubnetCreateDefinition.cs" />
     <Compile Include="CloudNetworks\v2\SubnetUpdateDefinition.cs" />
+    <Compile Include="CloudServers\v2\CloudServerService.cs" />
+    <Compile Include="CloudServers\v2\ComputeApiBuilder.cs" />
+    <Compile Include="CloudServers\v2\Serialization\ServerCollection.cs" />
+    <Compile Include="CloudServers\v2\ServerListOptions.cs" />
+    <Compile Include="CloudServers\v2\ServerReference.cs" />
     <Compile Include="Exceptions\ServiceOperationFailedException.cs" />
     <Compile Include="Identifier.cs" />
     <Compile Include="IPage.cs" />
     <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="PageOptions.cs" />
     <Compile Include="RackConnect\v3\ListPublicIPsFilter.cs" />
     <Compile Include="RackConnect\v3\NetworkReference.cs" />
     <Compile Include="RackConnect\v3\PublicIP.cs" />
@@ -106,6 +112,7 @@
     <Compile Include="Serialization\ResourceCollection.cs" />
     <Compile Include="Testing\HttpTest.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\GitVersionTask\build\dotnet\GitVersionTask.targets" Condition="Exists('..\..\packages\GitVersionTask\build\dotnet\GitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

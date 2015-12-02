@@ -2,23 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using net.openstack.Core.Domain;
 using net.openstack.Providers.Rackspace;
 
 namespace Rackspace.CloudServers.v2
 {
     public class CloudServersTestDataManager : IDisposable
     {
-        private readonly CloudServersProvider _serverService;
+        private readonly CloudServerService _serverService;
         private readonly HashSet<object> _testData;
 
-        public CloudServersTestDataManager(CloudServersProvider serverService)
+        public CloudServersTestDataManager(CloudServerService serverService)
         {
             _serverService = serverService;
             _testData = new HashSet<object>();
         }
 
-        public CloudServersTestDataManager(CloudIdentityProvider authenticationProvider) : this(new CloudServersProvider(null, authenticationProvider))
+        public CloudServersTestDataManager(CloudIdentityProvider identity, string region) : this(new CloudServerService(identity, region))
         {
         }
 
@@ -53,7 +52,7 @@ namespace Rackspace.CloudServers.v2
             var name = TestData.GenerateName();
             const string flavor = "2"; // 512 MB Standard Instance
             const string image = "09de0a66-3156-48b4-90a5-1cf25a905207"; // Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)
-            var requestedServer = _serverService.CreateServer(name, image, flavor, networks: new string[] { networkId });
+            var requestedServer = _serverService.
             var server = _serverService.GetDetails(requestedServer.Id);
             Register(server);
             return server;

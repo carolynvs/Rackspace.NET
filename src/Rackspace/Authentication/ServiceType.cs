@@ -65,6 +65,7 @@ namespace Rackspace
 
         public static readonly ServiceType RackspaceCDN = new ServiceType("rax:cdn");
         public static readonly ServiceType CloudNetworks = new ServiceType("network");
+        public static readonly ServiceType CloudServers = new ServiceType("compute");
         public static readonly ServiceType RackConnect = new ServiceType("rax:rackconnect");
     }
 }
