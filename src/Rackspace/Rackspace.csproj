@@ -102,6 +102,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\IdentifierConverter.cs" />
     <Compile Include="Serialization\Page.cs" />
+    <Compile Include="Serialization\PageLink.cs" />
+    <Compile Include="Serialization\ResourceCollection.cs" />
     <Compile Include="Testing\HttpTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

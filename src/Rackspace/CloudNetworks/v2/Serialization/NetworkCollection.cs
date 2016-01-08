@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using OpenStack.Serialization;
 using Rackspace.Serialization;
 
 namespace Rackspace.CloudNetworks.v2.Serialization
@@ -12,20 +11,12 @@ namespace Rackspace.CloudNetworks.v2.Serialization
         /// The requested networks.
         /// </summary>
         [JsonProperty("networks")]
-        public IList<Network> Networks
-        {
-            get { return Items; }
-            set { Items = value; }
-        }
+        protected IList<Network> Networks => Items;
 
         /// <summary>
         /// The paging navigation links.
         /// </summary>
         [JsonProperty("networks_links")]
-        public IList<PageLink> NetworksLinks
-        {
-            get { return Links; }
-            set { Links = value; }
-        }
+        protected IList<PageLink> NetworksLinks => Links;
     }
 }

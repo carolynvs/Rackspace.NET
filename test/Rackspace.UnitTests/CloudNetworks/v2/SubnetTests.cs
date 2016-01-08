@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
-using OpenStack.Serialization;
 using Rackspace.CloudNetworks.v2.Serialization;
+using Rackspace.Serialization;
 using Rackspace.Synchronous;
 using Rackspace.Testing;
 using Xunit;
@@ -24,8 +24,8 @@ namespace Rackspace.CloudNetworks.v2
         {
             var subnets = new SubnetCollection
             {
-                Subnets = { new Subnet { Id = Guid.NewGuid() } },
-                SubnetsLinks = { new PageLink("next", "http://api.com/next") }
+                Items = { new Subnet { Id = Guid.NewGuid() } },
+                Links = { new PageLink("next", "http://api.com/next") }
             };
             string json = JsonConvert.SerializeObject(subnets, Formatting.None);
             Assert.Contains("\"subnets\"", json);
@@ -34,8 +34,8 @@ namespace Rackspace.CloudNetworks.v2
             var result = JsonConvert.DeserializeObject<SubnetCollection>(json);
             Assert.NotNull(result);
             Assert.Equal(1, result.Count());
-            Assert.Equal(1, result.Subnets.Count());
-            Assert.Equal(1, result.SubnetsLinks.Count());
+            Assert.Equal(1, result.Items.Count());
+            Assert.Equal(1, result.Links.Count());
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace Rackspace.CloudNetworks.v2
             using (var httpTest = new HttpTest())
             {
                 Identifier subnetId = Guid.NewGuid();
-                httpTest.RespondWithJson(new SubnetCollection {Subnets = {new Subnet {Id = subnetId}}});
+                httpTest.RespondWithJson(new SubnetCollection {Items = {new Subnet {Id = subnetId}}});
 
                 var subnets = _cloudNetworkService.ListSubnets();
 
@@ -63,8 +63,8 @@ namespace Rackspace.CloudNetworks.v2
                 Identifier subnetId = Guid.NewGuid();
                 httpTest.RespondWithJson(new SubnetCollection
                 {
-                    Subnets = { new Subnet { Id = subnetId } },
-                    SubnetsLinks = { new PageLink("next", "http://api.com/next") }
+                    Items = { new Subnet { Id = subnetId } },
+                    Links = { new PageLink("next", "http://api.com/next") }
                 });
 
                 IPage<Subnet> subnets = _cloudNetworkService.ListSubnets(subnetId, 10);

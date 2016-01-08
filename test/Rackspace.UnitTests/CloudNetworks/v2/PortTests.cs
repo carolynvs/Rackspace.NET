@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
-using OpenStack.Serialization;
 using Rackspace.CloudNetworks.v2.Serialization;
+using Rackspace.Serialization;
 using Rackspace.Synchronous;
 using Rackspace.Testing;
 using Xunit;
@@ -24,8 +24,8 @@ namespace Rackspace.CloudNetworks.v2
         {
             var ports = new PortCollection
             {
-                Ports = {new Port {Id = Guid.NewGuid()}},
-                PortsLinks = {new PageLink("next", "http://api.com/next")}
+                Items = {new Port {Id = Guid.NewGuid()}},
+                Links = {new PageLink("next", "http://api.com/next")}
             };
 
             string json = JsonConvert.SerializeObject(ports, Formatting.None);
@@ -35,8 +35,8 @@ namespace Rackspace.CloudNetworks.v2
             var result = JsonConvert.DeserializeObject<PortCollection>(json);
             Assert.NotNull(result);
             Assert.Equal(1, result.Count());
-            Assert.Equal(1, result.Ports.Count());
-            Assert.Equal(1, result.PortsLinks.Count());
+            Assert.Equal(1, result.Items.Count());
+            Assert.Equal(1, result.Links.Count());
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Rackspace.CloudNetworks.v2
             using (var httpTest = new HttpTest())
             {
                 Identifier portId = Guid.NewGuid();
-                httpTest.RespondWithJson(new PortCollection {Ports = {new Port {Id = portId}}});
+                httpTest.RespondWithJson(new PortCollection {Items = {new Port {Id = portId}}});
 
                 var ports = _cloudNetworkService.ListPorts();
 
@@ -64,8 +64,8 @@ namespace Rackspace.CloudNetworks.v2
                 Identifier portId = Guid.NewGuid();
                 httpTest.RespondWithJson(new PortCollection
                 {
-                    Ports = { new Port { Id = portId } },
-                    PortsLinks = { new PageLink("next", "http://api.com/next") }
+                    Items = { new Port { Id = portId } },
+                    Links = { new PageLink("next", "http://api.com/next") }
                 });
 
                 IPage<Port> ports = _cloudNetworkService.ListPorts(portId, 10);

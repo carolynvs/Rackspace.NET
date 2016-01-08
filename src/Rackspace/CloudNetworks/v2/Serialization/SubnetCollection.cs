@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using OpenStack.Serialization;
 using Rackspace.Serialization;
 
 namespace Rackspace.CloudNetworks.v2.Serialization
@@ -12,20 +11,12 @@ namespace Rackspace.CloudNetworks.v2.Serialization
         /// The requested subnets.
         /// </summary>
         [JsonProperty("subnets")]
-        public IList<Subnet> Subnets
-        {
-            get { return Items; }
-            set { Items = value; }
-        }
+        protected IList<Subnet> Subnets => Items;
 
         /// <summary>
         /// The paging navigation links.
         /// </summary>
         [JsonProperty("subnets_links")]
-        public IList<PageLink> SubnetsLinks
-        {
-            get { return Links; }
-            set { Links = value; }
-        }
+        protected IList<PageLink> SubnetsLinks => Links;
     }
 }

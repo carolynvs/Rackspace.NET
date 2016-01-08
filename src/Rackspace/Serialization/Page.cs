@@ -1,74 +1,75 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Flurl;
 using Newtonsoft.Json;
-using PageLink = OpenStack.Serialization.PageLink;
 
 namespace Rackspace.Serialization
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IPage{T}" />
+    /// <exclude />
     [JsonObject(MemberSerialization.OptIn)]
-    public class Page<TPage, TItem> : IPage<TItem>
+    public class Page<TPage, TItem> : ResourceCollection<TItem>, IPage<TItem>, OpenStack.Serialization.IPageBuilder<TPage>
         where TPage : Page<TPage, TItem>
     {
-        private readonly PageWrapper _page;
-
-        private Page(PageWrapper page)
-        {
-            _page = page;
-        } 
+        private Func<Url, CancellationToken, Task<TPage>> _nextPageHandler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Page{TPage, TItem}"/> class.
+        /// Initializes a new instance of the <see cref="Page{TPage,TItem}"/> class.
         /// </summary>
-        public Page() : this(new PageWrapper())
-        { }
-        
-        /// <summary>
-        /// The requested items.
-        /// </summary>
-        protected IList<TItem> Items
+        public Page()
         {
-            get { return _page.Items; }
-            set { _page.Items = value; }
+            Links = new List<PageLink>();
+        }
+
+        /// <inheritdoc />
+        [JsonIgnore]
+        public bool HasNextPage => GetNextLink() != null;
+
+        /// <inheritdoc />
+        void OpenStack.Serialization.IPageBuilder<TPage>.SetNextPageHandler(Func<Url, CancellationToken, Task<TPage>> value)
+        {
+            _nextPageHandler = value;
+        }
+
+        /// <inheritdoc />
+        public async Task<IPage<TItem>> GetNextPageAsync(CancellationToken cancellationToken)
+        {
+            var nextPageLink = GetNextLink();
+            if (nextPageLink == null)
+                return Empty();
+
+            return await _nextPageHandler(new Url(nextPageLink.Url), cancellationToken);
+        }
+
+        /// <summary>
+        /// Returns an empty page
+        /// </summary>
+        public static IPage<TItem> Empty()
+        {
+            return EmptyPage.Instance;
         }
 
         /// <summary>
         /// The paging navigation links.
         /// </summary>
-        protected IList<PageLink> Links
+        public IList<PageLink> Links { get; set; }
+
+        /// <summary>
+        /// Finds the next link.
+        /// </summary>
+        protected virtual PageLink GetNextLink()
         {
-            get { return _page.Links; }
-            set { _page.Links = value; }
+            return Links.FirstOrDefault(x => x.IsNextPage);
         }
 
-        /// <inheritdoc />
-        public IEnumerator<TItem> GetEnumerator()
+        private sealed class EmptyPage : Page<TPage, TItem>
         {
-            return _page.GetEnumerator();
-        }
+            public static readonly EmptyPage Instance = new EmptyPage();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)_page).GetEnumerator();
-        }
-
-        /// <inheritdoc />
-        public bool HasNextPage => _page.HasNextPage;
-
-        /// <inheritdoc />
-        public async Task<IPage<TItem>> GetNextPageAsync(CancellationToken cancellation = new CancellationToken())
-        {
-            var nextPageAsync = (PageWrapper)(await _page.GetNextPageAsync(cancellation));
-            return new Page<TPage, TItem>(nextPageAsync);
-        }
-
-        // This is a wee bit of black magic which allows us to refer to a recurive generic type
-        // I couldn't figure out how to have _page use the underlying type directly :-)
-        private class PageWrapper : OpenStack.Serialization.Page<PageWrapper, TItem, PageLink>
-        {
-
+            private EmptyPage() { }
         }
     }
 }
