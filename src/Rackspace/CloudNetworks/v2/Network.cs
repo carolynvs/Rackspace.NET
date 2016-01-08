@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using OpenStack.Serialization;
 
 namespace Rackspace.CloudNetworks.v2
 {
@@ -11,7 +12,7 @@ namespace Rackspace.CloudNetworks.v2
     /// </para>
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
-    public class Network : NetworkDefinition
+    public class Network : NetworkDefinition, IServiceResource
     {
         /// <summary>
         /// The network identifier.
@@ -42,5 +43,7 @@ namespace Rackspace.CloudNetworks.v2
         /// </summary>
         [JsonProperty("subnets")]
         public IList<Identifier> Subnets { get; set; } 
+
+        object IServiceResource.Owner { get; set; }
     }
 }

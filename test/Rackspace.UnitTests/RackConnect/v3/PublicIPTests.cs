@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using OpenStack.Serialization;
 using Rackspace.Synchronous;
 using Rackspace.Testing;
 using Xunit;
@@ -31,7 +32,7 @@ namespace Rackspace.RackConnect.v3
                 Assert.NotNull(results);
                 Assert.Equal(1, results.Count());
                 Assert.Equal(id, results.First().Id);
-                Assert.All(results.OfType<IServiceResource<RackConnectService>>(), ip => Assert.NotNull(ip.Owner));
+                Assert.All(results.OfType<IServiceResource>(), ip => Assert.NotNull(ip.Owner));
             }
         }
 
@@ -83,7 +84,7 @@ namespace Rackspace.RackConnect.v3
                 httpTest.ShouldHaveCalled($"*/public_ips/{id}");
                 Assert.NotNull(result);
                 Assert.Equal(id, result.Id);
-                Assert.NotNull(((IServiceResource<RackConnectService>)result).Owner);
+                Assert.NotNull(((IServiceResource)result).Owner);
             }
         }
 
@@ -102,7 +103,7 @@ namespace Rackspace.RackConnect.v3
                 httpTest.ShouldHaveCalled($"*/public_ips");
                 Assert.NotNull(result);
                 Assert.Equal(id, result.Id);
-                Assert.NotNull(((IServiceResource<RackConnectService>)result).Owner);
+                Assert.NotNull(((IServiceResource)result).Owner);
             }
         }
 
@@ -122,7 +123,7 @@ namespace Rackspace.RackConnect.v3
                 httpTest.ShouldHaveCalled($"*/public_ips");
                 Assert.NotNull(result);
                 Assert.Equal(id, result.Id);
-                Assert.NotNull(((IServiceResource<RackConnectService>)result).Owner);
+                Assert.NotNull(((IServiceResource)result).Owner);
             }
         }
 
@@ -139,7 +140,7 @@ namespace Rackspace.RackConnect.v3
                 httpTest.ShouldHaveCalled($"*/public_ips/{id}");
                 Assert.NotNull(result);
                 Assert.Equal(id, result.Id);
-                Assert.NotNull(((IServiceResource<RackConnectService>)result).Owner);
+                Assert.NotNull(((IServiceResource)result).Owner);
             }
         }
 

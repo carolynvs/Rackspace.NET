@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Extensions;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -42,12 +43,7 @@ namespace Rackspace.RackConnect.v3
             _authenticationProvider = authenticationProvider;
             _urlBuilder = new ServiceUrlBuilder(ServiceType.RackConnect, authenticationProvider, region);
         }
-
-        private void SetOwner(IServiceResource<RackConnectService> resource)
-        {
-            resource.Owner = this;
-        }
-
+        
         #region Public IPs
 
         /// <summary>
@@ -75,10 +71,7 @@ namespace Rackspace.RackConnect.v3
                 .GetJsonAsync<IEnumerable<PublicIP>>(cancellationToken)
                 .ConfigureAwait(false);
 
-            foreach (var ip in ips)
-            {
-                SetOwner(ip);
-            }
+            ips.PropogateOwner(this);
 
             return ips;
         }
@@ -105,7 +98,7 @@ namespace Rackspace.RackConnect.v3
                     .ReceiveJson<PublicIP>()
                     .ConfigureAwait(false);
 
-                SetOwner(ip);
+                ip.PropogateOwner(this);
 
                 return ip;
             };
@@ -150,7 +143,7 @@ namespace Rackspace.RackConnect.v3
                 .GetJsonAsync<PublicIP>(cancellationToken)
                 .ConfigureAwait(false);
 
-            SetOwner(ip);
+            ip.PropogateOwner(this);
 
             return ip;
         }
@@ -306,7 +299,7 @@ namespace Rackspace.RackConnect.v3
                  .ReceiveJson<PublicIP>()
                  .ConfigureAwait(false);
 
-                SetOwner(ip);
+                ip.PropogateOwner(this);
                 return ip;
             };
 

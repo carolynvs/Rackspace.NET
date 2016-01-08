@@ -10,12 +10,14 @@ namespace Rackspace.CloudNetworks.v2
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
     [JsonConverterWithConstructor(typeof(RootWrapperConverter), "subnet")]
-    public class Subnet : SubnetCreateDefinition
+    public class Subnet : SubnetCreateDefinition, IServiceResource
     {
         /// <summary>
         /// The ID of the subnet.
         /// </summary>
         [JsonProperty("id")]
         public Identifier Id { get; set; }
+
+        object IServiceResource.Owner { get; set; }
     }
 }

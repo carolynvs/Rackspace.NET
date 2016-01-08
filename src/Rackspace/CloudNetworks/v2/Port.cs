@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OpenStack.Serialization;
 
 namespace Rackspace.CloudNetworks.v2
 {
@@ -10,7 +11,7 @@ namespace Rackspace.CloudNetworks.v2
     /// </para>
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
-    public class Port : PortCreateDefinition
+    public class Port : PortCreateDefinition, IServiceResource
     {
         /// <summary>
         /// The ID of the port.
@@ -35,5 +36,7 @@ namespace Rackspace.CloudNetworks.v2
         /// </summary>
         [JsonProperty("mac_address")]
         public string MACAddress { get; set; }
+
+        object IServiceResource.Owner { get; set; }
     }
 }
