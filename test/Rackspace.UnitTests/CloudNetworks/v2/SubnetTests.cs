@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using net.openstack.Core.Domain;
 using Newtonsoft.Json;
+using OpenStack.Serialization;
 using Rackspace.CloudNetworks.v2.Serialization;
 using Rackspace.Synchronous;
 using Rackspace.Testing;
@@ -25,7 +25,7 @@ namespace Rackspace.CloudNetworks.v2
             var subnets = new SubnetCollection
             {
                 Subnets = { new Subnet { Id = Guid.NewGuid() } },
-                SubnetsLinks = { new Link("next", "http://api.com/next") }
+                SubnetsLinks = { new PageLink("next", "http://api.com/next") }
             };
             string json = JsonConvert.SerializeObject(subnets, Formatting.None);
             Assert.Contains("\"subnets\"", json);
@@ -64,7 +64,7 @@ namespace Rackspace.CloudNetworks.v2
                 httpTest.RespondWithJson(new SubnetCollection
                 {
                     Subnets = { new Subnet { Id = subnetId } },
-                    SubnetsLinks = { new Link("next", "http://api.com/next") }
+                    SubnetsLinks = { new PageLink("next", "http://api.com/next") }
                 });
 
                 IPage<Subnet> subnets = _cloudNetworkService.ListSubnets(subnetId, 10);

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using net.openstack.Core.Domain;
 using Newtonsoft.Json;
+using OpenStack.Serialization;
 using Rackspace.CloudNetworks.v2.Serialization;
 using Rackspace.Synchronous;
 using Rackspace.Testing;
@@ -25,7 +25,7 @@ namespace Rackspace.CloudNetworks.v2
             var ports = new PortCollection
             {
                 Ports = {new Port {Id = Guid.NewGuid()}},
-                PortsLinks = {new Link("next", "http://api.com/next")}
+                PortsLinks = {new PageLink("next", "http://api.com/next")}
             };
 
             string json = JsonConvert.SerializeObject(ports, Formatting.None);
@@ -65,7 +65,7 @@ namespace Rackspace.CloudNetworks.v2
                 httpTest.RespondWithJson(new PortCollection
                 {
                     Ports = { new Port { Id = portId } },
-                    PortsLinks = { new Link("next", "http://api.com/next") }
+                    PortsLinks = { new PageLink("next", "http://api.com/next") }
                 });
 
                 IPage<Port> ports = _cloudNetworkService.ListPorts(portId, 10);

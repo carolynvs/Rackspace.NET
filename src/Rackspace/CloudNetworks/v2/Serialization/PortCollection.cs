@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using net.openstack.Core.Domain;
 using Newtonsoft.Json;
+using OpenStack.Serialization;
 using Rackspace.Serialization;
 
 namespace Rackspace.CloudNetworks.v2.Serialization
 {
     /// <inheritdoc cref="OpenStack.Networking.v2.Serialization.PortCollection"/>
-    public class PortCollection : Page<Port>
+    public class PortCollection : Page<PortCollection, Port>
     {
         /// <summary>
         /// The requested ports.
@@ -22,7 +22,7 @@ namespace Rackspace.CloudNetworks.v2.Serialization
         /// The paging navigation links.
         /// </summary>
         [JsonProperty("ports_links")]
-        public IList<Link> PortsLinks
+        public IList<PageLink> PortsLinks
         {
             get { return Links; }
             set { Links = value; }
