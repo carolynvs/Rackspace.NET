@@ -84,7 +84,6 @@
     <Compile Include="CloudNetworks\v2\SubnetCreateDefinition.cs" />
     <Compile Include="CloudNetworks\v2\SubnetUpdateDefinition.cs" />
     <Compile Include="Exceptions\ServiceOperationFailedException.cs" />
-    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Identifier.cs" />
     <Compile Include="IPage.cs" />
     <Compile Include="NamespaceDoc.cs" />
