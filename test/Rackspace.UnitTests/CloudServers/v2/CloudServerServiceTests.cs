@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Rackspace.CloudServers.v2
@@ -16,10 +17,7 @@ namespace Rackspace.CloudServers.v2
 
             var servers = new CloudServerService(identity, region);
             var results = await servers.ListServersAsync(new ServerListOptions {Name = "ci-*"});
-            foreach (Server server in results)
-            {
-                server.Id
-            }
+            throw new NotImplementedException();
         }
     }
 }

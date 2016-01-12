@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using net.openstack.Core.Domain;
 using net.openstack.Providers.Rackspace;
 using Rackspace.RackConnect.v3;
 using Rackspace.Synchronous;
@@ -19,7 +18,7 @@ namespace Rackspace.CloudServers.v2
         {
             _rackConnectService = rackConnectService;
             _testData = new HashSet<object>();
-            _serverTestData = new CloudServersTestDataManager(authenticationProvider);
+            _serverTestData = new CloudServersTestDataManager(authenticationProvider, "LON");
         }
         
         public void Register(IEnumerable<object> testItems)
