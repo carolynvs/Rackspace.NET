@@ -2,9 +2,6 @@
 using System.Diagnostics;
 using System.Extensions;
 using System.Net.Http.Headers;
-using Flurl.Http;
-using Flurl.Http.Configuration;
-using Newtonsoft.Json;
 using OpenStack;
 
 namespace Rackspace
@@ -17,52 +14,27 @@ namespace Rackspace
     {
         /// <summary>
         /// Global configuration which affects OpenStack.NET's behavior.
-        /// <para>Modify using <see cref="Configure"/>.</para>
+        /// <para>Customize using the <see cref="Configuring"/> event.</para>
         /// </summary>
-        public static readonly RackspaceNetConfigurationOptions Configuration = new RackspaceNetConfigurationOptions();
-        private static readonly object ConfigureLock = new object();
-        private static bool _isConfigured;
+        public static RackspaceNetConfigurationOptions Configuration => (RackspaceNetConfigurationOptions)OpenStackNet.Configuration;
 
         /// <summary>
-        /// Provides thread-safe accesss to Rackspace.NET's global configuration options.
-        /// <para>
-        /// Can only be called once at application start-up, before instantiating any Rackspace.NET objects.
-        /// </para>
+        /// Occurs when initializing the global configuration for Rackspace.NET.
         /// </summary>
-        /// <param name="configureFlurl">Addtional configuration of Flurl's global settings <seealso cref="FlurlHttp.Configure" />.</param>
-        /// <param name="configureJson">Additional configuration of Json.NET's global settings <seealso cref="JsonConvert.DefaultSettings" />.</param>
-        /// <param name="configure">Additional configuration of Rackspace.NET's global settings.</param>
-        public static void Configure(Action<FlurlHttpConfigurationOptions> configureFlurl = null, Action<JsonSerializerSettings> configureJson = null, Action<RackspaceNetConfigurationOptions> configure = null)
+        public static event Action<RackspaceNetConfigurationOptions> Configuring
         {
-            lock (ConfigureLock)
-            {
-                if (_isConfigured)
-                    return;
-                
-                OpenStackNet.Configure(configureFlurl, configureJson);
-
-                configure?.Invoke(Configuration);
-                Configuration.Apply(OpenStackNet.Configuration);
-
-                _isConfigured = true;
-            }
+            add { RackspaceNetConfigurationOptions.Initializing += value; }
+            remove { RackspaceNetConfigurationOptions.Initializing -= value; }
         }
 
         /// <summary>
-        /// Resets all configuration (Rackspace.NET, OpenStack.NET, Flurl and Json.NET) so that <see cref="Configure"/> can be called again.
+        /// <par>Resets all configuration (OpenStack.NET, Flurl and Json.NET).</par>
+        /// <para>After this is called, you must re-register any <see cref="Configuring"/> event handlers.</para>
         /// </summary>
         public static void ResetDefaults()
         {
-            lock (ConfigureLock)
-            {
-                if (!_isConfigured)
-                    return;
-
-                Configuration.ResetDefaults();
-                OpenStackNet.ResetDefaults();
-
-                _isConfigured = false;
-            }
+            RackspaceNetConfigurationOptions.ResetDefaults();
+            OpenStackNet.ResetDefaults();
         }
 
         /// <inheritdoc cref="OpenStack.OpenStackNet.Tracing" />
@@ -74,24 +46,23 @@ namespace Rackspace
     }
 
     /// <summary>
-    /// A set of properties that affect the SDK's behavior.
-    /// <para>Generally set via the static <see cref="Rackspace.RackspaceNet.Configure"/> method.</para>
+    /// <para>A set of properties that affect the SDK's behavior.</para>
+    /// <para>To customize, register an event handler for <see cref="OpenStackNet.Configuring"/>.</para>
     /// </summary>
     public class RackspaceNetConfigurationOptions : OpenStackNetConfigurationOptions
     {
-        internal RackspaceNetConfigurationOptions() { }
+        internal static event Action<RackspaceNetConfigurationOptions> Initializing;
 
-        internal void Apply(OpenStackNetConfigurationOptions target)
+        internal static void ResetDefaults()
         {
-            target.UserAgents.Clear();
-            UserAgents.ForEach(userAgent => target.UserAgents.Add(userAgent));
+            Initializing = null;
         }
 
-        /// <inheritdoc/>
-        public override void ResetDefaults()
+        /// <summary />
+        protected override void OnCompleteInitialization()
         {
-            base.ResetDefaults();
-            UserAgents.Add(new ProductInfoHeaderValue("rackspace.net", GetType().GetAssemblyFileVersion()));
+            Initializing?.Invoke(this);
+            UserAgents.Add(new ProductInfoHeaderValue("rackspace.net", typeof(RackspaceNetConfigurationOptions).GetAssemblyFileVersion()));
         }
     }
 }

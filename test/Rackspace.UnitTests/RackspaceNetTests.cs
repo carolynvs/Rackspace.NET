@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Flurl.Extensions;
 using Flurl.Http;
 using OpenStack;
 using Rackspace.Testing;
@@ -26,10 +27,7 @@ namespace Rackspace
         {
             using (var httpTest = new HttpTest())
             {
-                OpenStackNet.Configure();
-                RackspaceNet.Configure();
-
-                await "http://api.com".GetAsync();
+                await "http://api.com".PrepareRequest().GetAsync();
 
                 var userAgent = httpTest.CallLog[0].Request.Headers.UserAgent.ToString();
 
@@ -46,10 +44,11 @@ namespace Rackspace
         {
             using (var httpTest = new HttpTest())
             {
-                RackspaceNet.Configure();
+#pragma warning disable 618
                 OpenStackNet.Configure();
+#pragma warning restore 618
 
-                await "http://api.com".GetAsync();
+                await "http://api.com".PrepareRequest().GetAsync();
 
                 var userAgent = httpTest.CallLog[0].Request.Headers.UserAgent.ToString();
 
@@ -62,22 +61,11 @@ namespace Rackspace
         }
 
         [Fact]
-        public void ResetDefaults_ResetsFlurlConfiguration()
-        {
-            RackspaceNet.Configure();
-            Assert.NotNull(FlurlHttp.Configuration.BeforeCall);
-            RackspaceNet.ResetDefaults();
-            Assert.Null(FlurlHttp.Configuration.BeforeCall);
-        }
-
-        [Fact]
         public async Task UserAgentTest()
         {
             using (var httpTest = new HttpTest())
             {
-                RackspaceNet.Configure();
-
-                await "http://api.com".GetAsync();
+                await "http://api.com".PrepareRequest().GetAsync();
 
                 var userAgent = httpTest.CallLog[0].Request.Headers.UserAgent.ToString();
                 Assert.Contains("rackspace.net", userAgent);
@@ -86,33 +74,16 @@ namespace Rackspace
         }
 
         [Fact]
-        public async Task UserAgentOnlyListedOnceTest()
-        {
-            using (var httpTest = new HttpTest())
-            {
-                RackspaceNet.Configure();
-                RackspaceNet.Configure();
-
-                await "http://api.com".GetAsync();
-
-                var userAgent = httpTest.CallLog[0].Request.Headers.UserAgent.ToString();
-
-                var rackspaceMatches = new Regex("rackspace").Matches(userAgent);
-                Assert.Equal(1, rackspaceMatches.Count);
-
-                var openstackMatches = new Regex("openstack").Matches(userAgent);
-                Assert.Equal(1, openstackMatches.Count);
-            }
-        }
-
-        [Fact]
         public async Task UserAgentWithApplicationSuffixTest()
         {
             using (var httpTest = new HttpTest())
             {
-                RackspaceNet.Configure(configure: options => options.UserAgents.Add(new ProductInfoHeaderValue("(unit-tests)")));
+                RackspaceNet.Configuring += options =>
+                {
+                    options.UserAgents.Add(new ProductInfoHeaderValue("(unit-tests)"));
+                };
 
-                await "http://api.com".GetAsync();
+                await "http://api.com".PrepareRequest().GetAsync();
 
                 var userAgent = httpTest.CallLog[0].Request.Headers.UserAgent.ToString();
                 Assert.Contains("rackspace.net", userAgent);

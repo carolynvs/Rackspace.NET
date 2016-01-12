@@ -3,6 +3,7 @@ source https://nuget.org/api/v2
 
 nuget openstack.net !>= 1.6.0 prerelease
 
+nuget ModuleInit.Fody 1.5.8
 nuget GitVersionTask 3.1.1
 nuget moq !>= 4.2
 nuget EWSoftware.SHFB 2015.7.25

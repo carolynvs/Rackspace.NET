@@ -21,8 +21,6 @@ namespace Rackspace
 
         public static Mock<IAuthenticationProvider> CreateIdentityService()
         {
-            RackspaceNet.Configure();
-            
             var stub = new Mock<IAuthenticationProvider>();
 
             stub.Setup(provider => provider.GetToken(It.IsAny<CancellationToken>()))

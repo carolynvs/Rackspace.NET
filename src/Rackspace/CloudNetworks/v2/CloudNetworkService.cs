@@ -24,7 +24,6 @@ namespace Rackspace.CloudNetworks.v2
         /// <param name="region">The region.</param>
         public CloudNetworkService(OpenStack.Authentication.IAuthenticationProvider authenticationProvider, string region)
         {
-            RackspaceNet.Configure();
             _networkingApiBuilder = new NetworkingApiBuilder(ServiceType.CloudNetworks, authenticationProvider, region);
         }
 
